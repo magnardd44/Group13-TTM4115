@@ -10,11 +10,6 @@ import "./page.css"
 
 
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 
 import {
   Table,
@@ -33,26 +28,33 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { CgProfile } from "react-icons/cg";
 import { IoLogInOutline } from "react-icons/io5";
 
+import { buttonVariants } from "@/components/ui/button"
+import { navigate } from "../actions";
+import { supabase } from "../../utils/supabase/client";
+
+
 
 export default function Dashboard() {
+
+
+  const LogOut = async () => {
+
+    try {
+      const {error} = await supabase.auth.signOut();
+
+      if (!error) {
+        navigate('#')
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
-    <main className="">
-      <div className="h-14 w-full border flex justify-between items-center pr-5 pl-5">
-        <h1 className="font-semibold">Charger App</h1>  
-        
-        <Popover>
-          <PopoverTrigger><Button variant="ghost"><RxHamburgerMenu size={25}/></Button></PopoverTrigger>
-          <PopoverContent className="w-[200px]">
-          <Button variant="ghost" className="flex gap-3 w-full justify-start"><LuLayoutDashboard  size={25}/> <p>Dashboard</p> </Button>
-          <Button variant="ghost" className="flex gap-3 w-full justify-start"><CgProfile  size={25}/> <p>Edit Profile</p> </Button>
-          <Button variant="ghost" className="flex gap-3 w-full justify-start"><IoLogInOutline   size={26}/> <p>Log out</p> </Button>
-
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      
+    <main className="">    
       <div className="z-10 w-full items-center justify-center text-sm flex flex-col gap-10">
+
+     
         <CurrentlyCharging presentage={43} />
 
         <h2 className="text-3xl ">Dashboard</h2>
@@ -91,12 +93,12 @@ const CurrentlyCharging = ({presentage}) => {
 
 
 const TableCharging = () => {
-  const data = [{date: "January 12", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: "27 kr"},
-  {id: 0, date: "January 12", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: "27 kr"},
-  {id: 1, date: "January 10", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: "37 kr"},
-  {id: 2, date: "January 9", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: "50 kr"},
-  {id: 3, date: "January 5", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: "34 kr"},
-  {id: 4, date: "January 2", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: "11 kr"}]
+  const data = [
+  {id: 0, date: "January 12", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: 27},
+  {id: 1, date: "January 10", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: 37},
+  {id: 2, date: "January 9", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: 50 },
+  {id: 3, date: "January 5", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: 34 },
+  {id: 4, date: "January 2", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: 11 }]
   return (
 
     <Table>
@@ -122,7 +124,10 @@ const TableCharging = () => {
     <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
+          <TableCell className="text-right">
+            {data.reduce((total, currentValue) => {
+            return total + currentValue.price
+          }, 0)}kr</TableCell>
         </TableRow>
       </TableFooter>
   </Table>
@@ -132,10 +137,10 @@ const TableCharging = () => {
 
 const TableInvoices = () => {
   const data = [
-  {id: 0, month: "Jan", kwh: "23kwh", price: "27 kr", hasPaid: false},
-  {id: 1, month: "Feb", kwh: "23kwh", price: "37 kr", hasPaid: true},
-  {id: 2, month: "Mar", kwh: "23kwh", price: "50 kr", hasPaid: true},
-  {id: 3, month: "Apr", kwh: "23kwh", price: "34 kr", hasPaid: true},]
+  {id: 0, month: "Jan", kwh: "23kwh", price: 27, hasPaid: false},
+  {id: 1, month: "Feb", kwh: "23kwh", price: 37, hasPaid: true},
+  {id: 2, month: "Mar", kwh: "23kwh", price: 50, hasPaid: true},
+  {id: 3, month: "Apr", kwh: "23kwh", price: 34, hasPaid: true},]
   return (
 
     <Table>
@@ -161,7 +166,9 @@ const TableInvoices = () => {
     <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
+          <TableCell className="text-right">  {data.reduce((total, currentValue) => {
+            return total + currentValue.price
+          }, 0)}kr</TableCell>
         </TableRow>
       </TableFooter>
   </Table>
