@@ -1,14 +1,11 @@
 "use client"
 
-import Image from "next/image";
-import { Button } from "@/components/ui/button"
-import { Chart as ChartJS } from 'chart.js/auto'
-import { Chart }            from 'react-chartjs-2'
 // ChartJS.register(ArcElement, Tooltip, Legend);
 import { Bar } from 'react-chartjs-2';
 import "./page.css"
 
-
+import { Chart as ChartJS } from 'chart.js/auto'
+import { Chart }            from 'react-chartjs-2'
 
 
 import {
@@ -20,42 +17,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "../../components/ui/table"
 
-
-import { LuLayoutDashboard } from "react-icons/lu";
-import { RxHamburgerMenu } from "react-icons/rx";
-import { CgProfile } from "react-icons/cg";
-import { IoLogInOutline } from "react-icons/io5";
-
-import { buttonVariants } from "@/components/ui/button"
-import { navigate } from "../actions";
-import { supabase } from "../../utils/supabase/client";
-
-
+import Navbar from '../../components/navbar';
 
 export default function Dashboard() {
 
 
-  const LogOut = async () => {
-
-    try {
-      const {error} = await supabase.auth.signOut();
-
-      if (!error) {
-        navigate('#')
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   return (
     <main className="">    
       <div className="z-10 w-full items-center justify-center text-sm flex flex-col gap-10">
-
-     
-        <CurrentlyCharging presentage={43} />
+        <Navbar/>
 
         <h2 className="text-3xl ">Dashboard</h2>
         <div className="w-10/12 max-w-[500px]">

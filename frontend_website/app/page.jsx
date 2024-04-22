@@ -2,6 +2,8 @@
 
 import { supabase } from "../lib/utils"
 
+import { useEffect } from "react";
+
 
 import Image from "next/image";
 import { useState } from "react";
@@ -24,11 +26,43 @@ export default function Home() {
   const [user, setUser] = useState(null);
 
 
+  useEffect(() => {
+
+    const GetUser = async () => {
+      try {
+        const {data, error } = await supabase.auth.getUser();
+        
+        console.log(data);
+  
+        if (data.user) {
+          navigate('dashboard')
+        } else {
+          toast('You need to log in with Google to access the dashboard')
+        }
+        
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    GetUser();
+  
+    
+
+
+  }, [])
+  
+
   const LogIn = async() => {
 
     try {
       await supabase.auth.signInWithOAuth({
-        provider: 'google'
+        provider: 'google',
+        options: {
+          queryParams: {
+            prompt: "consent"
+          }
+        }
       });
 
     } catch (error) {
