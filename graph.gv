@@ -1,0 +1,25 @@
+digraph G {
+node [shape=box style=rounded fontname=Helvetica];
+edge [ fontname=Helvetica ];
+initial [shape=point width=0.2];
+initial -> idle [label=" "]
+idle -> tag_identify [label=" car_plugged_in /\nconnect_to_server();\ncheck_tag();\ndisplay_tag_check();\n"]
+tag_identify -> server_validate [label=" tag_detected /\ndisplay_waiting_for_payment();\n"]
+tag_identify -> camera_identify [label=" button /\ncheck_camera();\ndisplay_camera_check();\n"]
+tag_identify -> idle [label=" car_unplugged /\ndisconnect_from_server();\nstop_display();\n"]
+camera_identify -> server_validate [label=" licence_detected /\ndisplay_waiting_for_payment();\n"]
+camera_identify -> app_identify [label=" button /\ndisplay_connect_with_app();\nstart_timer(app_timer, 5000);\n"]
+camera_identify -> idle [label=" car_unplugged /\ndisconnect_from_server();\nstop_display();\n"]
+server_validate -> camera_identify [label=" tag_info_rejected /\ncheck_camera();\ndisplay_camera_check();\n"]
+server_validate -> charging [label=" server_ok /\nstart_charge();\ndisplay_charge();\n"]
+server_validate -> app_identify [label=" licence_info_rejected /\ndisplay_connect_with_app();\nstart_timer(app_timer, 5000);\n"]
+server_validate -> idle [label=" car_unplugged /\ndisconnect_from_server();\nstop_display();\n"]
+app_identify -> charging [label=" app_start /\nstart_charge();\ndisplay_charge();\n"]
+app_identify -> identification_failed [label=" app_failed /\ndisplay_error_message();\n"]
+app_identify -> identification_failed [label=" app_timer /\ndisplay_error_message();\n"]
+app_identify -> idle [label=" car_unplugged /\ndisconnect_from_server();\nstop_display();\n"]
+identification_failed -> idle [label=" car_unplugged /\ndisconnect_from_server();\n"]
+charging -> charge_complete [label=" charge_complete /\ndisplay_complete();\nsend_complete();\n"]
+charging -> idle [label=" car_unplugged /\nstop_display();\ndisconnect_from_server();\n"]
+charge_complete -> idle [label=" car_unplugged /\ndisconnect_from_server();\nstop_display();\n"]
+}

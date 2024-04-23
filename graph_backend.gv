@@ -1,0 +1,18 @@
+digraph G {
+node [shape=box style=rounded fontname=Helvetica];
+edge [ fontname=Helvetica ];
+initial [shape=point width=0.2];
+initial -> idle [label=" "]
+idle -> connected [label=" charger_connected /\nmark_charger_occupied();\n"]
+charging -> wait_disconnect [label=" charge_complete /\nissue_payment();\n"]
+charging -> idle [label=" charger_disconnected /\nissue_payment();\nmark_charger_free();\n"]
+connected -> validate_pay_info [label=" tag_received /\nstart_validation();\n"]
+connected -> validate_pay_info [label=" licence_received /\nstart_validation();\n"]
+connected -> validate_pay_info [label=" app_connected /\nstart_validation();\n"]
+connected -> wait_disconnect [label=" identification_failed"]
+connected -> idle [label=" charger_disconnected /\nmark_charger_free();\n"]
+validate_pay_info -> charging [label=" accepted /\nsend_ok();\nstore_info();\n"]
+validate_pay_info -> connected [label=" invalid_information /\nreject_information();\n"]
+validate_pay_info -> idle [label=" charger_disconnected /\nmark_charger_free();\n"]
+wait_disconnect -> idle [label=" charger_disconnected /\nmark_charger_free();\n"]
+}
