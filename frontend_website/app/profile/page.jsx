@@ -12,6 +12,9 @@ import { supabase } from "../../lib/utils";
 
 import { RotatingLines } from "react-loader-spinner";
 
+import {Button} from "../../components/ui/button"
+import {Input} from "../../components/ui/input"
+
 
 export default function Profile() {
 
@@ -65,14 +68,14 @@ export default function Profile() {
       <div className="z-10 w-full py-4 items-center justify-center font-mono text-sm lg:flex">
         <p className="text-3xl ">Profile</p>
       </div>
-
       {user && cars ? <><div className="z-10 w-full py-4 items-center justify-center font-mono text-sm lg:flex">
         <p className="text-3xl ">{`Welcome ${user.user_metadata.full_name}`}</p>
-
-      </div> <div className="w-full py-10 bg-slate-500 flex justify-center items-center">{cars.map((el) => {
-        return <p className="text-3xl">{el.plate_number}</p>
-      })}
-        </div></>: <RotatingLines strokeColor="grey"
+      </div> 
+      <div className="flex w-full max-w-sm items-center space-x-2">
+        <Input type="text" value={cars[0].plate_number} />
+        <Button type="submit">Save</Button>
+      </div>
+      </>: <RotatingLines strokeColor="grey"
         strokeWidth="5"
         animationDuration="0.75"
         width="96"/>
