@@ -8,7 +8,7 @@ import {
 } from "../components/ui/popover"
 
 
-import { Button, buttonVariants } from '../components/ui/button';
+import { Button } from '../components/ui/button';
 
 import { RxHamburgerMenu } from "react-icons/rx";
 

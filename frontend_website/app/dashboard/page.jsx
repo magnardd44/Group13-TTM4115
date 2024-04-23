@@ -49,21 +49,6 @@ export default function Dashboard() {
 }
 
 
-const CurrentlyCharging = ({presentage}) => {
-  return (
-    <>
-    {/* <p className="text-xl">Charging...</p> */}
-    <div className="battery">
-      <div className="flex justify-center items-center flex-col h-full">
-        <p className="text-xl relative font-semibold">Charging...</p>
-        <p className="relative text-xl">{presentage}%</p>
-      </div>
-    </div>
-    </>
-  )
-}
-
-
 const TableCharging = () => {
   const data = [
   {id: 0, date: "January 12", timeInterval: "16:00 - 16:44", kwh: "23kwh", price: 27},

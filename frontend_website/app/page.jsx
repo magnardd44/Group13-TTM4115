@@ -16,6 +16,7 @@ import { navigate } from "./actions";
 
 
 import { toast } from "sonner"
+import { Button } from '../components/ui/button';
 
 
 
@@ -23,35 +24,35 @@ import { toast } from "sonner"
 
 export default function Home() {
 
+
+
+  
+  // useEffect(() => {
+
+  //   const GetUser = async () => {
+  //     try {
+  //       const {data, error } = await supabase.auth.getUser();
+        
+  //       console.log(data);
+  
+  //       if (data.user) {
+  //         navigate('dashboard')
+  //       } else {
+  //         toast('You need to log in with Google to access the dashboard')
+  //       }
+        
+  //     } catch (error) {
+  //       console.error(error)
+  //     }
+  //   }
+
+  //   GetUser();
+  
+  // }, [])
+  
+
   const [user, setUser] = useState(null);
 
-
-  useEffect(() => {
-
-    const GetUser = async () => {
-      try {
-        const {data, error } = await supabase.auth.getUser();
-        
-        console.log(data);
-  
-        if (data.user) {
-          navigate('dashboard')
-        } else {
-          toast('You need to log in with Google to access the dashboard')
-        }
-        
-      } catch (error) {
-        console.error(error)
-      }
-    }
-
-    GetUser();
-  
-    
-
-
-  }, [])
-  
 
   const LogIn = async() => {
 
@@ -120,18 +121,25 @@ export default function Home() {
         <h1 className="font-semibold">Charger App</h1>  
       </div>
       
-      <div className="z-10 h-screen w-full items-center justify-center font-mono text-sm flex flex-col gap-4 bg-gray-200">
+      <div className="z-10 h-screen w-full items-center justify-center text-sm flex flex-col gap-20">
         
-        <button className="bg-white border-black border-2 flex flex-row justify-center items-center gap-2 px-4 py-2 text-2xl" onClick={LogIn}>Log in with Google<FcGoogle /></button>
+        <h1>Log in to start charging, see charging information or your charging history</h1>
+        {/* <ul>
+          <li>start charging</li>
+          <li>see your charging information</li>
+          <li>See all</li>
+        </ul> */}
+        <Button onClick={() => console.log(user)}>log user</Button>
+        <Button className="flex gap-4" onClick={LogIn}><span>Log in with Google</span><FcGoogle size={25}/></Button>
 
-
+{/* 
         <button className="bg-white border-black border-2 flex flex-row justify-center items-center gap-2 px-4 py-2 text-2xl" onClick={GetUser}>Get user</button>
 
 
         <button className="bg-white border-black border-2 flex flex-row justify-center items-center gap-2 px-4 py-2 text-2xl" onClick={addNew}>Insert car</button>
 
 
-        <button className="bg-white border-black border-2 flex flex-row justify-center items-center gap-2 px-4 py-2 text-2xl" onClick={getCars}>Fetch cars</button>
+        <button className="bg-white border-black border-2 flex flex-row justify-center items-center gap-2 px-4 py-2 text-2xl" onClick={getCars}>Fetch cars</button> */}
       </div>
     </main>
   );
