@@ -16,6 +16,10 @@ import { LuLayoutDashboard } from "react-icons/lu";
 
 import { CgProfile } from "react-icons/cg";
 
+import { IoHomeSharp } from "react-icons/io5";
+
+import { MdLogout } from "react-icons/md";
+
 import Link from "next/link";
 
 import { IoLogInOutline } from "react-icons/io5";
@@ -40,23 +44,21 @@ function Navbar() {
 
 
   return (
-    <div className="h-14 w-full border flex justify-between items-center pr-5 pl-5">
-      <h1 className="font-semibold">Charger App</h1>  
+    <div className="h-14 w-full border flex justify-between items-center pr-5 pl-5  lg:pr-10 lg:pl-10 ">
+      <h1 className="font-semibold lg:text-xl">Charger App</h1>  
 
       <Popover>
           <PopoverTrigger>
-           <RxHamburgerMenu size={25}/>
+           <RxHamburgerMenu size={35}/>
           </PopoverTrigger>
           <PopoverContent className="w-[200px]">
-            <Button asChild variant="ghost">
-              <Link href="/dashboard" >Dashboard</Link>
+            <Button asChild variant="ghost" className="w-[90%] flex items-center justify-start">
+              <Link href="/dashboard"><IoHomeSharp size={25} className="mr-2"/>Dashboard</Link>
             </Button>
-            <Button asChild variant="ghost">
-              <Link href="/profile"><CgProfile size={25}/>Profile</Link>
+            <Button asChild variant="ghost" className="w-[90%] flex items-center justify-start">
+              <Link href="/profile"><CgProfile size={25} className="mr-2"/>Profile</Link>
             </Button>
-            <Button asChild variant="ghost">
-              <span onClick={logout}><IoLogInOutline size={25}/>Log out</span>
-            </Button>
+            <Button asChild variant="ghost" onClick={logout} className="w-[90%] flex items-center justify-start"><p className="cursor-pointer"><MdLogout size={25} className="mr-2"/>Log out</p></Button>
           </PopoverContent>
       </Popover>
     </div>

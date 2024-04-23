@@ -57,6 +57,20 @@ export default function Profile() {
 
 
 
+
+
+    const channels = supabase.channel('custom-insert-channel')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'test' },
+      (payload) => {
+        console.log('Change received!', payload)
+      }
+    )
+    .subscribe()
+
+
+
   return (
     <main className="w-screen h-screen">
       <div className="h-14 w-full border flex justify-center items-center">
@@ -65,15 +79,18 @@ export default function Profile() {
       </div>
 
       
-      <div className="z-10 w-full py-4 items-center justify-center font-mono text-sm lg:flex">
-        <p className="text-3xl ">Profile</p>
+      <div className="z-10 w-full py-4 items-center pl-10 font-mono text-sm lg:flex">
+        <p className="text-3xl">Profile</p>
       </div>
+
+      <div className="w-full py-10 bg-slate-200 flex justify-center items-center flex-col">
       {user && cars ? <><div className="z-10 w-full py-4 items-center justify-center font-mono text-sm lg:flex">
         <p className="text-3xl ">{`Welcome ${user.user_metadata.full_name}`}</p>
       </div> 
       <div className="flex w-full max-w-sm items-center space-x-2">
-        <Input type="text" value={cars[0].plate_number} />
-        <Button type="submit">Save</Button>
+        <p>Plate number</p>
+        <Input type="text" value={cars[0].plate_number} disabled={cars[0].plate_number ? true : false} />
+        <Button type="submit" disabled={cars[0].plate_number ? true : false}>Save</Button>
       </div>
       </>: <RotatingLines strokeColor="grey"
         strokeWidth="5"
@@ -81,6 +98,7 @@ export default function Profile() {
         width="96"/>
       }
       
+      </div>
     </main>
   );
 }

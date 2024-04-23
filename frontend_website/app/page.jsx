@@ -1,76 +1,20 @@
 'use client'
 
 import { supabase } from "../lib/utils"
-
 import { useEffect } from "react";
-
-
 import Image from "next/image";
 import { useState } from "react";
-
-
 import { FcGoogle } from "react-icons/fc";
-
 import { redirect } from "next/navigation";
 import { navigate } from "./actions";
-
-
 import { toast } from "sonner"
 import { Button } from '../components/ui/button';
-
-
-
-
+import Loader from "../components/Loader";
 
 export default function Home() {
 
 
-
-  
-  // useEffect(() => {
-
-  //   const GetUser = async () => {
-  //     try {
-  //       const {data, error } = await supabase.auth.getUser();
-        
-  //       console.log(data);
-  
-  //       if (data.user) {
-  //         navigate('dashboard')
-  //       } else {
-  //         toast('You need to log in with Google to access the dashboard')
-  //       }
-        
-  //     } catch (error) {
-  //       console.error(error)
-  //     }
-  //   }
-
-  //   GetUser();
-  
-  // }, [])
-  
-
   const [user, setUser] = useState(null);
-
-
-  const LogIn = async() => {
-
-    try {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          queryParams: {
-            prompt: "consent"
-          }
-        }
-      });
-
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
 
   const GetUser = async () => {
     try {
@@ -79,7 +23,10 @@ export default function Home() {
       console.log(data);
 
       if (data.user) {
-        navigate('dashboard')
+        //navigate('dashboard')
+        toast('Yippi')
+        setUser(data.user)
+        
       } else {
         toast('You need to log in with Google to access the dashboard')
       }
@@ -89,13 +36,47 @@ export default function Home() {
     }
   }
 
+  const LogIn = async() => {
 
-  const addNew = async () => {
+    try {
 
-    console.log(user.id)
+
+      const {data, error } = await supabase.auth.getUser();
+      
+      console.log(data);
+
+      if (!data.user) {
+    
+        const {data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: "http://localhost:3000/dashboard",
+            queryParams: {
+              prompt: "consent"
+            }
+          }
+        });
+      } 
+
+      toast('Yippi')
+      setUser(data.user)
+            
+    
+      }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
+
+ 
+
+
+  const addNewUser = async () => {
+
     try {
       
-      const {error} = await supabase.from('cars').insert({"plate_number": "testtest", "user_id": user.id})
+      const {error} = await supabase.from('users').insert({"first_name": "testtest", "user_id": user.id})
 
       console.log(error)
     } catch (error) {
@@ -114,6 +95,8 @@ export default function Home() {
       console.error(error)
     }
   }
+
+
 
   return (
     <main className="">
