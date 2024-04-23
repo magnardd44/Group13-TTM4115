@@ -1,0 +1,62 @@
+/* body {
+    background-color: rgb(6, 6, 6);
+  } */
+  
+  .battery {
+    position: relative;
+    margin: 0 auto;
+    width: 300px;
+    border: 10px solid rgb(187 247 208);
+    height: 120px;
+    border-radius: 15px;
+  }
+  
+  .battery:before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    height: 88px;
+    background-color:  rgb(187 247 208);
+    border-radius: 5px;
+    animation: full 5s linear infinite;
+  }
+  
+  .battery:after {
+    content: "";
+    position: absolute;
+    right: -30px;
+    top: 28px;
+    width: 15px;
+    height: 50px;
+    background-color: rgb(187 247 208);
+    border-bottom-right-radius: 90px;
+    border-top-right-radius: 90px;
+  }
+  
+  @keyframes full {
+    0% {
+      width: 0%;
+      background-color: rgb(255, 114, 106);
+    }
+    25% {
+      width: 24%;
+      background-color: rgb(255, 114, 106);
+      
+    }
+    50% {
+        width: 48%;
+        background-color: rgb(233, 199, 27);
+    }
+    75% {
+      width: 72%;
+      background-color: rgb(233, 199, 27);
+
+    }
+    100% {
+      width: 96%;
+      background-color: rgb(157, 255, 128);
+
+    }
+  }
+  
