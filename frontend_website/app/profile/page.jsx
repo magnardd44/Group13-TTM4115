@@ -48,17 +48,6 @@ export default function Profile() {
     GetUser();
   }, []);
 
-  const channels = supabase
-    .channel("custom-insert-channel")
-    .on(
-      "postgres_changes",
-      { event: "INSERT", schema: "public", table: "test" },
-      (payload) => {
-        console.log("Change received!", payload);
-      }
-    )
-    .subscribe();
-
   return (
     <main className="w-screen h-screen">
       <div className="z-10 w-full py-4 items-center pl-10 font-mono text-sm lg:flex">
