@@ -17,6 +17,8 @@ export default function Cars() {
   const [user, setUser] = useState(null);
   const [car, setCar] = useState(null);
 
+  const [client, setClient] = useState(null);
+
   const [connectStatus, setConnectStatus] = useState(null);
 
   const [currentCharge, setCurrentCharge] = useState(0);
@@ -71,7 +73,9 @@ export default function Cars() {
 
     if (client) {
       client.on("connect", () => {
-        setConnectStatus("Connected");
+        setConnectStatus(true);
+
+        setClient(client);
 
         console.log("Connected");
 
@@ -93,17 +97,24 @@ export default function Cars() {
     };
   }, []);
 
-  if (!user || !car || !connectStatus == "Connected") return <Loader />;
+  const mqttPublish = () => {
+    if (client) {
+      client.publish(topic, JSON.stringify({ text: "TESSSST" }), (error) => {
+        if (error) {
+          console.log("Publish error: ", error);
+        }
+      });
+    }
+  };
+
+  if (!user || !car || !connectStatus) return <Loader />;
 
   return (
-    <div className="w-screen h-screen m-0 bg-gray-200 flex justify-center items-center flex-col">
-      <div className="w-full py-10 flex justify-center items-center gap-4 flex-col">
-        <h1 className="text-2xl">Current status:</h1>
+    <div className="h-screen flex justify-center items-center flex-col">
+      <div className="w-full pb-10 flex justify-center items-center gap-4 flex-col">
+        <h1 className="text-3xl">Current status:</h1>
         {car.currently_charging ? (
           <>
-            <div className="flex flex-row">
-              <h2 className="text-2xl">Charging</h2>
-            </div>
             <div>
               <CurrentlyCharging presentage={currentCharge} />
             </div>
@@ -111,26 +122,35 @@ export default function Cars() {
         ) : (
           <>
             <div>
-              <h2 className="text-2xl">Not Charging</h2>
-            </div>
-          </>
-        )}
-
-        {car.needs_verification ? (
-          <>
-            <div className="bg-red-200 py-5 px-10">
-              <h2>Press the button to activate the charging:</h2>
-              <Button onClick={() => sendMessage()}>Activate</Button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div>
-              <h2 className="text-2xl">Nothin</h2>
+              <h2 className="text-2xl underline underline-offset-8">
+                Not Charging
+              </h2>
             </div>
           </>
         )}
       </div>
+      {car.needs_verification ? (
+        <>
+          <div className="bg-gray-200 py-5 px-10 flex justify-center items-center flex-col gap-4 rounded-lg">
+            <h2 className="text-xl">
+              Press the button to activate the charging:
+            </h2>
+            <Button
+              onClick={() => {
+                let isConfirmed = confirm(
+                  "Are you sure that you want to start charging?"
+                );
+
+                if (isConfirmed) mqttPublish();
+              }}
+            >
+              Activate
+            </Button>
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

@@ -32,7 +32,7 @@ export const getUser = async () => {
   }
 };
 
-export const getCarById = async (user_id: string) => {
+export const getCarById = async (user_id) => {
   try {
     const { data, error } = await supabase
       .from("cars")
@@ -55,5 +55,19 @@ export const logout = async (router) => {
     }
   } catch (error) {
     console.error(error);
+  }
+};
+
+export const addCar = async (inputData) => {
+  try {
+    const { data, error } = await supabase.from("cars").insert({
+      plate_number: inputData.plate_number,
+      user_id: inputData.user_id,
+      currently_charging: false,
+      car_id: inputData.car_id,
+      needs_verification: false,
+    });
+  } catch (error) {
+    throw new Error(error);
   }
 };
