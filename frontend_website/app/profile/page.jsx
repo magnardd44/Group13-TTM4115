@@ -13,6 +13,8 @@ import { RotatingLines } from "react-loader-spinner";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 
+import { getUser } from "../utils";
+
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [cars, setCars] = useState(null);
@@ -20,18 +22,15 @@ export default function Profile() {
   useEffect(() => {
     const GetUser = async () => {
       try {
-        const { data: userData, error } = await supabase.auth.getUser();
+        let user = await getUser();
 
-        if (userData.user) {
-          setUser(userData.user);
-          console.log(userData.user.id);
+        if (user) {
+          setUser(user);
 
           const { data: carsData, error } = await supabase
             .from("cars")
             .select()
-            .eq("user_id", userData.user.id);
-
-          console.log(carsData);
+            .eq("user_id", user.id);
 
           if (carsData) {
             setCars(carsData);
