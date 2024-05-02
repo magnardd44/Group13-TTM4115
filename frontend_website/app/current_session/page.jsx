@@ -1,27 +1,26 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-
 import { supabase } from "../../lib/utils";
-
 import { getCarById, getUser } from "../utils";
-
 import Loader from "../../components/Loader";
-
 import { CurrentlyCharging } from "../../components/CurrentlyCharging";
 import { Button } from "../../components/ui/button";
-
 import mqtt from "mqtt";
+import { mqttPublish } from "../utils";
 
 export default function Cars() {
   const [user, setUser] = useState(null);
   const [car, setCar] = useState(null);
-
   const [client, setClient] = useState(null);
-
   const [connectStatus, setConnectStatus] = useState(null);
-
   const [currentCharge, setCurrentCharge] = useState(0);
+
+  const protocol = "wss";
+  const host = "test.mosquitto.org";
+  const port = "8081";
+  const connectUrl = `${protocol}://${host}:${port}/`;
+  const topic = "/group-13/charger_server";
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -54,21 +53,6 @@ export default function Cars() {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, []);
-
-  const protocol = "wss";
-  const host = "test.mosquitto.org";
-  const port = "8081";
-  const clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
-
-  const connectUrl = `${protocol}://${host}:${port}/`;
-
-  const topic = "/group-13/charger_server";
-
-  useEffect(() => {
     const client = mqtt.connect(connectUrl);
 
     if (client) {
@@ -93,19 +77,11 @@ export default function Cars() {
     }
 
     return () => {
+      supabase.removeChannel(channel);
+
       client.end();
     };
   }, []);
-
-  const mqttPublish = () => {
-    if (client) {
-      client.publish(topic, JSON.stringify({ text: "TESSSST" }), (error) => {
-        if (error) {
-          console.log("Publish error: ", error);
-        }
-      });
-    }
-  };
 
   if (!user || !car || !connectStatus) return <Loader />;
 

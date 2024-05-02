@@ -71,3 +71,13 @@ export const addCar = async (inputData) => {
     throw new Error(error);
   }
 };
+
+export const mqttPublish = () => {
+  if (client) {
+    client.publish(topic, JSON.stringify({ text: "TESSSST" }), (error) => {
+      if (error) {
+        console.log("Publish error: ", error);
+      }
+    });
+  }
+};
