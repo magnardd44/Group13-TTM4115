@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { supabase } from "../lib/utils";
 
 export const LogInUser = async () => {
@@ -20,9 +19,6 @@ export const LogInUser = async () => {
 export const getUser = async () => {
   try {
     const { data, error } = await supabase.auth.getUser();
-
-    console.log("FRA GETUSER");
-    console.log(data);
 
     if (data.user) {
       return data.user;
@@ -47,8 +43,6 @@ export const getCarById = async (user_id) => {
 export const logout = async (router) => {
   try {
     const { error } = await supabase.auth.signOut();
-
-    console.log(error);
 
     if (!error) {
       router.push("/");
