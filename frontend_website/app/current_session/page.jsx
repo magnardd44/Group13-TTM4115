@@ -8,6 +8,7 @@ import { CurrentlyCharging } from "../../components/CurrentlyCharging";
 import { Button } from "../../components/ui/button";
 import mqtt from "mqtt";
 import { mqttPublish } from "../utils";
+import { FaChargingStation } from "react-icons/fa";
 
 export default function Cars() {
   const [user, setUser] = useState(null);
@@ -98,7 +99,7 @@ export default function Cars() {
         ) : (
           <>
             <div>
-              <h2 className="text-2xl underline underline-offset-8">
+              <h2 className="text-2xl bg-red-100 rounded-xl p-2 px-6">
                 Not Charging
               </h2>
             </div>
@@ -107,20 +108,20 @@ export default function Cars() {
       </div>
       {car.needs_verification ? (
         <>
-          <div className="bg-gray-200 py-5 px-10 flex justify-center items-center flex-col gap-4 rounded-lg">
-            <h2 className="text-xl">
+          <div className=" py-5 px-10 flex justify-center items-center flex-col gap-4 rounded-lg border rounded-xl p-4 md:p-10 shadow-xl m-4 ">
+            <h2 className="text-xl text-center">
               Press the button to activate the charging:
             </h2>
             <Button
+              className="flex gap-2"
               onClick={() => {
                 let isConfirmed = confirm(
                   "Are you sure that you want to start charging?"
                 );
-
                 if (isConfirmed) mqttPublish();
               }}
             >
-              Activate
+              <span>Activate Charging</span> <FaChargingStation size={22} />
             </Button>
           </div>
         </>

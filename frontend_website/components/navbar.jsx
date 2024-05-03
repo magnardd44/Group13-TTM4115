@@ -38,7 +38,7 @@ function Navbar() {
 
   return (
     <div className="h-14 w-full border flex justify-between items-center pr-5 pl-5  lg:pr-10 lg:pl-10 ">
-      <h1 className="font-semibold lg:text-xl">Charger App</h1>
+      <h1 className="font-semibold lg:text-xl">Charge & Go</h1>
 
       {user ? (
         <Popover>

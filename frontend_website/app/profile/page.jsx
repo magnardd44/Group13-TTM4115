@@ -38,8 +38,6 @@ export default function Profile() {
             .select()
             .eq("user_id", user.id);
 
-          console.log(carsData);
-
           if (carsData) {
             setCars(carsData);
           }
@@ -62,46 +60,52 @@ export default function Profile() {
   if (!user || !cars) return <Loader />;
 
   return (
-    <main className="h-screen">
-      <div className="z-10 w-full py-4 items-center pl-10 font-mono text-sm lg:flex">
-        <p className="text-3xl">Profile</p>
+    <main className="h-screen w-full flex items-center flex-col">
+      <div className="z-10 w-full my-6 flex items-center justify-center font-mono text-sm lg:flex">
+        <p className="text-3xl text-center">Your Profile</p>
       </div>
 
-      <div className="w-full py-10  flex justify-center items-center flex-col">
-        <div className="z-10 w-full py-10 items-center justify-center font-mono text-sm flex">
-          <p className="text-3xl ">{`Welcome ${user.user_metadata.full_name}`}</p>
+      <div className="py-10 flex justify-center items-center flex-col border rounded-xl p-4 md:p-10 shadow m-4">
+        <div className="z-10 w-full py-6 items-center justify-center font-mono text-sm flex">
+          <p className="text-3xl text-center">{`Welcome ${user.user_metadata.full_name}`}</p>
         </div>
-        <div className="flex w-full max-w-sm items-center space-x-2">
-          <p>Plate number</p>
-          <Input
-            type="text"
-            value={currentPlateNumber}
-            onChange={(el) => setCurrentPlateNumber(el.target.value)}
-            disabled={isDisabled}
-          />
-          <Button
-            type="submit"
-            disabled={isDisabled}
-            onClick={() => {
-              let isUserSure = confirm(
-                "Are you sure that you entered the correct number"
-              );
+        <div className="flex w-full max-w-sm items-center space-x-2 flex-col gap-2">
+          <p>
+            {cars.plate_number != ""
+              ? "Your current plate number:"
+              : "Enter your plate number:"}
+          </p>
+          <div className="flex gap-1">
+            <Input
+              type="text"
+              value={currentPlateNumber}
+              onChange={(el) => setCurrentPlateNumber(el.target.value)}
+              disabled={isDisabled}
+            />
+            <Button
+              type="submit"
+              disabled={isDisabled}
+              onClick={() => {
+                let isUserSure = confirm(
+                  "Are you sure that you entered the correct number"
+                );
 
-              if (isUserSure) {
-                addCar({
-                  plate_number: currentPlateNumber,
-                  user_id: user.id,
-                  currently_charging: false,
-                  car_id: "",
-                  needs_verification: false,
-                });
+                if (isUserSure) {
+                  addCar({
+                    plate_number: currentPlateNumber,
+                    user_id: user.id,
+                    currently_charging: false,
+                    car_id: "",
+                    needs_verification: false,
+                  });
 
-                setIsDisabled(true);
-              }
-            }}
-          >
-            Save
-          </Button>
+                  setIsDisabled(true);
+                }
+              }}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </div>
     </main>

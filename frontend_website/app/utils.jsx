@@ -5,7 +5,7 @@ export const LogInUser = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:3000/dashboard",
+        redirectTo: "http://localhost:3000/current_session",
         queryParams: {
           prompt: "consent",
         },
