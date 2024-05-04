@@ -66,12 +66,25 @@ export const addCar = async (inputData) => {
   }
 };
 
-export const mqttPublish = () => {
-  if (client) {
-    client.publish(topic, JSON.stringify({ text: "TESSSST" }), (error) => {
-      if (error) {
-        console.log("Publish error: ", error);
-      }
-    });
+export const mqttPublish = async ({ client, user_id }) => {
+  try {
+    if (client) {
+      client.publish(
+        "/group-13/charger_server",
+        JSON.stringify({ message_to: "charger", trigger: "app_start" }),
+        (error) => {
+          if (error) {
+            console.log("Publish error: ", error);
+            return;
+          }
+        }
+      );
+      await supabase
+        .from("cars")
+        .update({ currently_charging: true })
+        .eq("user_id", user_id);
+    }
+  } catch (error) {
+    throw new Error(error);
   }
 };

@@ -14,8 +14,12 @@ export default function Cars() {
   const [user, setUser] = useState(null);
   const [car, setCar] = useState(null);
   const [client, setClient] = useState(null);
+  const [channel, setChannel] = useState(null);
+
   const [connectStatus, setConnectStatus] = useState(null);
   const [currentCharge, setCurrentCharge] = useState(0);
+
+  const [needsVerification, setNeedsVerification] = useState(false);
 
   const protocol = "wss";
   const host = "test.mosquitto.org";
@@ -28,39 +32,43 @@ export default function Cars() {
       const res = await getUser();
       if (res) setUser(res);
 
+      console.log(res);
+
+      const localChannel = supabase
+        .channel("realtime-cars")
+        .on(
+          "postgres_changes",
+          {
+            event: "UPDATE",
+            schema: "public",
+            table: "cars",
+            filter: `user_id=eq.${res.id}`,
+          },
+          (payload) => {
+            console.log(payload);
+
+            setCar((prevState) => ({
+              ...prevState,
+              currently_charging: payload.new.currently_charging,
+            }));
+          }
+        )
+        .subscribe();
+
+      setChannel(localChannel);
+
       const carResponse = await getCarById(res.id);
       setCar(carResponse[0]);
     };
     fetchUser();
 
-    const channel = supabase
-      .channel("realtime-cars")
-      .on(
-        "postgres_changes",
-        {
-          event: "UPDATE",
-          schema: "public",
-          table: "cars",
-        },
-        (payload) => {
-          console.log(payload);
-
-          setCar((prevState) => ({
-            ...prevState,
-            currently_charging: payload.new.currently_charging,
-            needs_verification: payload.new.needs_verification,
-          }));
-        }
-      )
-      .subscribe();
-
     const client = mqtt.connect(connectUrl);
 
     if (client) {
       client.on("connect", () => {
-        setConnectStatus(true);
-
         setClient(client);
+
+        setConnectStatus(true);
 
         console.log("Connected");
 
@@ -73,6 +81,13 @@ export default function Cars() {
 
         if (payload.message.current_charge != "") {
           setCurrentCharge(payload.message.current_charge);
+        }
+
+        if (payload.message.trigger == "app_request") {
+          console.log("DINGDINGDING");
+          setNeedsVerification(true);
+        } else {
+          setNeedsVerification(false);
         }
       });
     }
@@ -106,9 +121,9 @@ export default function Cars() {
           </>
         )}
       </div>
-      {car.needs_verification ? (
+      {needsVerification ? (
         <>
-          <div className=" py-5 px-10 flex justify-center items-center flex-col gap-4 rounded-lg border rounded-xl p-4 md:p-10 shadow-xl m-4 ">
+          <div className=" py-5 px-10 flex justify-center items-center flex-col gap-4 border rounded-xl p-4 md:p-10 shadow-xl m-4 ">
             <h2 className="text-xl text-center">
               Press the button to activate the charging:
             </h2>
@@ -118,7 +133,10 @@ export default function Cars() {
                 let isConfirmed = confirm(
                   "Are you sure that you want to start charging?"
                 );
-                if (isConfirmed) mqttPublish();
+                if (isConfirmed) {
+                  mqttPublish({ client: client, user_id: user.id });
+                  setNeedsVerification(false);
+                }
               }}
             >
               <span>Activate Charging</span> <FaChargingStation size={22} />
