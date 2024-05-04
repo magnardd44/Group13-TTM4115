@@ -93,7 +93,7 @@ export default function Cars() {
     }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
 
       client.end();
     };
