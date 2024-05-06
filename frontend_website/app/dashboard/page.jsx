@@ -27,20 +27,30 @@ function Dashboard() {
 
   useEffect(() => {
     const fetchInvoices = async () => {
-      const { data, error } = await supabase
+      const user = await supabase.auth.getUser();
+
+      const { data: carResponse, error: carFetchError } = await supabase
+        .from("cars")
+        .select("*")
+        .eq("user_id", user.data.user.id);
+
+      const { data: invoiceResponse, error: invoiceFetchError } = await supabase
         .from("test")
         .select("*")
-        .eq("car_id", "98281653499")
+        .eq("car_id", carResponse[0].car_id)
         .order("created_at", { ascending: false })
         .limit(7);
 
-      if (error) throw new Error(error);
+      console.log(invoiceResponse);
 
-      let charingTimeResults = calculateTimeCharged(data);
+      if (carFetchError) throw new Error(carFetchError);
+      if (invoiceFetchError) throw new Error(invoiceFetchError);
+
+      let charingTimeResults = calculateTimeCharged(invoiceResponse);
 
       setCharingTimes(charingTimeResults);
 
-      setInvoices(data);
+      setInvoices(invoiceResponse);
     };
 
     fetchInvoices();

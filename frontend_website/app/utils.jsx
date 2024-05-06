@@ -5,8 +5,7 @@ export const LogInUser = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo:
-          "https://group13-ttm411530-magnardd44s-projects.vercel.app/current_session",
+        redirectTo: "http://localhost:3000/current_session",
         queryParams: {
           prompt: "consent",
         },
@@ -16,6 +15,8 @@ export const LogInUser = async () => {
     throw new Error("Failed to sign in user");
   }
 };
+
+//"https://group13-ttm411530-magnardd44s-projects.vercel.app/current_session",
 
 export const getUser = async () => {
   try {

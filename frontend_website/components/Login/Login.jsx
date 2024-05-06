@@ -6,8 +6,6 @@ import { Button } from "../ui/button";
 import { LogInUser } from "../../app/utils";
 import Image from "next/image";
 
-import backgroundImage from "../../public/background_image.avif";
-
 function Login() {
   return (
     <>
