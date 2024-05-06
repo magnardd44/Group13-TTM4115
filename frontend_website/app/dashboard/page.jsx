@@ -23,11 +23,32 @@ import Loader from "../../components/Loader";
 function Dashboard() {
   const [invoices, setInvoices] = useState(null);
 
-  const [charingTimes, setCharingTimes] = useState(null);
+  const [chargingTimes, setChargingTimes] = useState(null);
 
   useEffect(() => {
     const fetchInvoices = async () => {
       const user = await supabase.auth.getUser();
+
+      /*
+
+      const { data: testResponse, error: testError } = await supabase
+        .from("test")
+        .select("*, cars!inner(car_id)")
+        .eq("user_id", user.data.user.id)
+        .order("created_at", { ascending: false })
+        .limit(7);
+
+      console.log(testResponse);
+
+
+      let chargingTimeResults = calculateTimeCharged(testResponse);
+
+      setChargingTimes(chargingTimeResults);
+
+      setInvoices(testResponse);
+
+
+      */
 
       const { data: carResponse, error: carFetchError } = await supabase
         .from("cars")
@@ -41,14 +62,16 @@ function Dashboard() {
         .order("created_at", { ascending: false })
         .limit(7);
 
-      console.log(invoiceResponse);
-
       if (carFetchError) throw new Error(carFetchError);
       if (invoiceFetchError) throw new Error(invoiceFetchError);
 
-      let charingTimeResults = calculateTimeCharged(invoiceResponse);
+      console.log(invoiceResponse);
 
-      setCharingTimes(charingTimeResults);
+      let chargingTimeResults = calculateTimeCharged(invoiceResponse);
+
+      console.log(chargingTimeResults);
+
+      setChargingTimes(chargingTimeResults);
 
       setInvoices(invoiceResponse);
     };
@@ -58,22 +81,15 @@ function Dashboard() {
 
   const calculateTimeCharged = (data) => {
     let times = data.map((currentValue) => {
-      let chargingStarted = new Date(currentValue.created_at);
-      let chargingStopped = new Date(currentValue.charging_stopped);
+      let chargingTimeInMinutes = currentValue.percentage_charged * 2;
 
-      let difference = Math.abs(chargingStopped - chargingStarted);
-
-      let differenceInSeconds = difference / 1000;
-
-      let differenceInMinutes = differenceInSeconds / 60;
-
-      return differenceInMinutes;
+      return chargingTimeInMinutes;
     });
 
     return times;
   };
 
-  if (!invoices || !charingTimes) return <Loader />;
+  if (!invoices || !chargingTimes) return <Loader />;
 
   const BarChart = () => {
     const data = {
@@ -89,7 +105,7 @@ function Dashboard() {
       datasets: [
         {
           label: "Number of Minutes Charged",
-          data: charingTimes,
+          data: chargingTimes,
           backgroundColor: [
             "rgba(255, 99, 132, 0.2)",
             "rgba(54, 162, 235, 0.2)",
@@ -129,58 +145,63 @@ function Dashboard() {
     return <Bar data={data} options={options} />;
   };
 
+  function addMinutesToDate(date, minutes) {
+    var newDate = new Date(date);
+
+    var totalMinutes = newDate.getMinutes() + minutes;
+
+    var hoursToAdd = Math.floor(totalMinutes / 60);
+
+    newDate.setMinutes(totalMinutes % 60);
+
+    newDate.setHours(newDate.getHours() + hoursToAdd);
+
+    return newDate;
+  }
+
   const TableCharging = () => {
-    const dates = [
-      "May 2",
-      "May 1",
-      "April 30",
-      "April 28",
-      "April 27",
-      "April 25",
-      "April 24",
-    ];
-
     const data = invoices.map((invoice, index) => {
-      let startTime = new Date(invoice.created_at);
+      let newDate = new Date(invoice.created_at);
 
-      let stopTime = new Date(invoice.charging_stopped);
+      let day = newDate.getDate();
 
-      let startHour = startTime.getHours();
-      let startMinutes = startTime.getMinutes();
+      let month = newDate.getMonth() + 1;
 
-      let stopHour = stopTime.getHours();
-      let stopMinutes = stopTime.getMinutes();
+      if (day < 10) day = "0" + day;
+      if (month < 10) month = "0" + month;
 
-      let formattedStartTime =
-        (startHour < 10 ? "0" : "") +
-        startHour +
-        ":" +
-        (startMinutes < 10 ? "0" : "") +
-        startMinutes;
+      let date = `${day}.${month}`;
 
-      let formattedStopTime =
-        (stopHour < 10 ? "0" : "") +
-        stopHour +
-        ":" +
-        (stopMinutes < 10 ? "0" : "") +
-        stopMinutes;
+      let startHour = newDate.getHours();
+      let startMinute = newDate.getMinutes();
 
-      let currentDuration = `${formattedStartTime} - ${formattedStopTime}`;
+      if (startHour < 10) startHour = "0" + startHour;
+      if (startMinute < 10) startMinute = "0" + startMinute;
 
-      let difference = Math.abs(stopTime - startTime);
+      let stopDateTime = addMinutesToDate(newDate, chargingTimes[index]);
 
-      let differenceInSeconds = difference / 1000;
+      let stopHour = stopDateTime.getHours();
+      let stopMinute = stopDateTime.getMinutes();
 
-      let differenceInHours = differenceInSeconds / 3600;
+      if (stopHour < 10) stopHour = "0" + stopHour;
+      if (stopMinute < 10) stopMinute = "0" + stopMinute;
 
-      let kwh = differenceInHours * 15;
+      let startTime = `${startHour}:${startMinute}`;
+      let stopTime = `${stopHour}:${stopMinute}`;
+
+      let currentDuration = `${startTime} - ${stopTime}`;
+
+      console.log(chargingTimes);
+
+      let kwh = chargingTimes[index] / 2;
+      let price = kwh * 2;
 
       return {
         id: index + 1,
-        date: dates[index],
+        date: date,
         timeInterval: currentDuration,
         kwh: Math.round(kwh),
-        price: Math.round(kwh * 0.8),
+        price: Math.round(price),
       };
     });
 

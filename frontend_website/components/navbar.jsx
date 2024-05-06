@@ -90,7 +90,7 @@ function Navbar() {
             >
               <p className="cursor-pointer">
                 <MdLogout size={25} className="mr-2" />
-                Log out
+                Logout
               </p>
             </Button>
           </PopoverContent>

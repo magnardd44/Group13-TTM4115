@@ -25,7 +25,7 @@ export default function Cars() {
   const host = "test.mosquitto.org";
   const port = "8081";
   const connectUrl = `${protocol}://${host}:${port}/`;
-  const topic = "/group-13/charger_server";
+  const topic = "/group-13/server_client";
 
   useEffect(() => {
     const fetchUser = async () => {

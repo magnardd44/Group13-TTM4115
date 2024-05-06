@@ -60,7 +60,7 @@ export default function Profile() {
   if (!user || !cars) return <Loader />;
 
   return (
-    <main className="h-screen w-full flex items-center flex-col">
+    <main className="h-screen w-full flex items-center justify-center flex-col">
       <div className="z-10 w-full my-6 flex items-center justify-center font-mono text-sm lg:flex">
         <p className="text-3xl text-center">Your Profile</p>
       </div>
