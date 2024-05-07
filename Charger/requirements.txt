@@ -1,0 +1,12 @@
+cbor2==5.6.3
+luma.core==2.4.2
+mfrc522==0.0.7
+paho-mqtt==2.1.0
+pillow==10.3.0
+pyftdi==0.55.4
+pyserial==3.5
+pyusb==1.2.1
+RPi.GPIO==0.7.1
+smbus2==0.4.3
+spidev==3.6
+stmpy==0.7.5
