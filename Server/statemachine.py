@@ -53,7 +53,7 @@ class MQTT_Client_1:
             
             data, count = (
                 supabase
-                .table("test")
+                .table("invoices")
                 .select("*")
                 .order("created_at", desc=True)
                 .limit(1)
@@ -61,7 +61,7 @@ class MQTT_Client_1:
             
             res  = (
                 supabase
-                .table("test")
+                .table("invoices")
                 .update({"percentage_charged": 100 - parsed_json["starting_charge_percentage"]})
                 .eq("id", int(data[1][0]["id"]))
                 .execute())
@@ -121,7 +121,7 @@ class MQTT_Client_1:
 
                 data, count = ( 
                     supabase
-                    .table("test")
+                    .table("invoices")
                     .insert(request_json)
                     .execute())
 

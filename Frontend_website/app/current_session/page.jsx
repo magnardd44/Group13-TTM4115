@@ -1,5 +1,12 @@
+/* 
+Make the page a client component 
+Could have split up the code more, to utilize more of the server side
+benefits, but we thought that this was outside the scope of the delivery.
+*/
+
 "use client";
 
+// Imports
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../lib/utils";
 import { getCarById, getUser } from "../utils";
@@ -11,54 +18,58 @@ import { mqttPublish } from "../utils";
 import { FaChargingStation } from "react-icons/fa";
 
 export default function Cars() {
+  // States
   const [user, setUser] = useState(null);
   const [car, setCar] = useState(null);
   const [client, setClient] = useState(null);
   const [channel, setChannel] = useState(null);
-
   const [connectStatus, setConnectStatus] = useState(null);
   const [currentCharge, setCurrentCharge] = useState(0);
-
   const [needsVerification, setNeedsVerification] = useState(false);
 
+  // Constants for the MQTT connection
   const protocol = "wss";
   const host = "test.mosquitto.org";
   const port = "8081";
   const connectUrl = `${protocol}://${host}:${port}/`;
   const topic = "/group-13/server_client";
 
+  // Listens to changes to the database for when the car starts charging.
+  // This could also have been done with MQTT, but we decided to use the DB.
   useEffect(() => {
     const fetchUser = async () => {
       const res = await getUser();
-      if (res) setUser(res);
+      if (res) {
+        setUser(res);
 
-      console.log(res);
+        console.log(res);
 
-      const localChannel = supabase
-        .channel("realtime-cars")
-        .on(
-          "postgres_changes",
-          {
-            event: "UPDATE",
-            schema: "public",
-            table: "cars",
-            filter: `user_id=eq.${res.id}`,
-          },
-          (payload) => {
-            console.log(payload);
+        const localChannel = supabase
+          .channel("realtime-cars")
+          .on(
+            "postgres_changes",
+            {
+              event: "UPDATE",
+              schema: "public",
+              table: "cars",
+              filter: `user_id=eq.${res.id}`,
+            },
+            (payload) => {
+              console.log(payload);
 
-            setCar((prevState) => ({
-              ...prevState,
-              currently_charging: payload.new.currently_charging,
-            }));
-          }
-        )
-        .subscribe();
+              setCar((prevState) => ({
+                ...prevState,
+                currently_charging: payload.new.currently_charging,
+              }));
+            }
+          )
+          .subscribe();
 
-      setChannel(localChannel);
+        setChannel(localChannel);
 
-      const carResponse = await getCarById(res.id);
-      setCar(carResponse[0]);
+        const carResponse = await getCarById(res.id);
+        setCar(carResponse[0]);
+      }
     };
     fetchUser();
 

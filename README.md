@@ -21,6 +21,10 @@
 
         pip install -r requirements.txt
 
+<h2>Then run the code by using (if you don't have python installed, go to python.org and follow their instructions):</h2>
+        
+        python3 statemachine.py
+
 # Instructions for the Charger folder:
 
     Then create a virtual environment for the Charger folder:
@@ -37,6 +41,10 @@
 <h2>Install the packages in the Charger venv</h2>
 
         pip install -r requirements.txt
+
+<h2>Then run the code by using (if you don't have python installed, go to python.org and follow their instructions):</h2>
+        
+        python3 statemachine.py
 
 # Instructions for the Frontend_website folder:
 

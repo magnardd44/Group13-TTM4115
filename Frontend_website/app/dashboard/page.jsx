@@ -29,34 +29,13 @@ function Dashboard() {
     const fetchInvoices = async () => {
       const user = await supabase.auth.getUser();
 
-      /*
-
-      const { data: testResponse, error: testError } = await supabase
-        .from("test")
-        .select("*, cars!inner(car_id)")
-        .eq("user_id", user.data.user.id)
-        .order("created_at", { ascending: false })
-        .limit(7);
-
-      console.log(testResponse);
-
-
-      let chargingTimeResults = calculateTimeCharged(testResponse);
-
-      setChargingTimes(chargingTimeResults);
-
-      setInvoices(testResponse);
-
-
-      */
-
       const { data: carResponse, error: carFetchError } = await supabase
         .from("cars")
         .select("*")
         .eq("user_id", user.data.user.id);
 
       const { data: invoiceResponse, error: invoiceFetchError } = await supabase
-        .from("test")
+        .from("invoices")
         .select("*")
         .eq("car_id", carResponse[0].car_id)
         .order("created_at", { ascending: false })
