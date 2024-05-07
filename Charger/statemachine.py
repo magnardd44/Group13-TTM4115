@@ -369,15 +369,11 @@ t_app_1 = {'trigger':'app_start',
       'source':'app_identify', 
       'target':'charging'}
 
-t_app_2= {'trigger':'app_failed',
+t_app_2 = {'trigger':'button',
       'source':'app_identify',
       'target':'identification_failed'}
 
-t_app_3 = {'trigger':'button',
-      'source':'app_identify',
-      'target':'identification_failed'}
-
-t_app_4 = {'trigger':'car_unplugged',
+t_app_3 = {'trigger':'car_unplugged',
       'source':'app_identify',
       'target':'idle'}
 
@@ -429,7 +425,7 @@ states = [idle, tag_identify, licence_identify, server_validate, charging, charg
 
 
 # Change 4: We pass the set of states to the state machine
-machine = Machine(name='charger', transitions=[t0, t_idle_1, t_tag_1, t_tag_2, t_tag_3, t_camera_1, t_camera_2, t_camera_3, t_server_1, t_server_2, t_server_3, t_server_4, t_app_1, t_app_2, t_app_3, t_app_4, t_identification, t_charging_1, t_charging_2, t_complete], obj=charger, states=states)
+machine = Machine(name='charger', transitions=[t0, t_idle_1, t_tag_1, t_tag_2, t_tag_3, t_camera_1, t_camera_2, t_camera_3, t_server_1, t_server_2, t_server_3, t_server_4, t_app_1, t_app_2, t_app_3, t_identification, t_charging_1, t_charging_2, t_complete], obj=charger, states=states)
 with open("graph.gv", "w") as file:
       print(get_graphviz_dot(machine), file=file)
 charger.stm = machine
