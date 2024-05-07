@@ -5,7 +5,8 @@ export const LogInUser = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: "http://localhost:3000/current_session",
+        redirectTo:
+          "https://group13-ttm411530-magnardd44s-projects.vercel.app/current_session",
         queryParams: {
           prompt: "consent",
         },
