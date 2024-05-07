@@ -17,11 +17,11 @@
 
         source serverEnv/bin/activate
 
-<h2>Installing the packages in the Server venv</h2>
+<h2>Install the packages in the Server venv</h2>
 
         pip install -r requirements.txt
 
-<h2>Instructions for the Charger folder:</h2>
+# Instructions for the Charger folder:
 
     Then create a virtual environment for the Charger folder:
 
@@ -34,17 +34,14 @@
 
         source chargerEnv/bin/activate
 
-<h2>Installing the packages in the Charger venv</h2>
+<h2>Install the packages in the Charger venv</h2>
 
         pip install -r requirements.txt
 
-<h2>Instructions for the Frontend_website folder:</h2>
-
-<h2>Frontend_website</h2>
+# Instructions for the Frontend_website folder:
 
         cd ../Frontend_website
         npm install
-
         npm run dev
 
         Open localhost on port 3000 (http://localhost:3000/)
