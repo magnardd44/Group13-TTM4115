@@ -20,36 +20,46 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../lib/utils";
 import Loader from "../../components/Loader";
 
-function Dashboard() {
-  const [invoices, setInvoices] = useState(null);
+import { getUser } from "../utils";
 
-  const [chargingTimes, setChargingTimes] = useState(null);
+function Dashboard() {
+  const [invoices, setInvoices] = useState([]);
+
+  const [chargingTimes, setChargingTimes] = useState([]);
 
   useEffect(() => {
     const fetchInvoices = async () => {
-      const user = await supabase.auth.getUser();
+      try {
+        const user = await getUser();
 
-      console.log(user);
-      const { data: carResponse, error: carFetchError } = await supabase
-        .from("cars")
-        .select("*")
-        .eq("user_id", user.data.user.id);
+        console.log(user);
+        const { data: carResponse, error: carFetchError } = await supabase
+          .from("cars")
+          .select("*")
+          .eq("user_id", user.id);
 
-      const { data: invoiceResponse, error: invoiceFetchError } = await supabase
-        .from("invoices")
-        .select("*")
-        .eq("car_id", carResponse[0].car_id)
-        .order("created_at", { ascending: false })
-        .limit(7);
+        console.log(carResponse);
 
-      if (carFetchError) throw new Error(carFetchError);
-      if (invoiceFetchError) throw new Error(invoiceFetchError);
+        const { data: invoiceResponse, error: invoiceFetchError } =
+          await supabase
+            .from("invoices")
+            .select("*")
+            .eq("car_id", carResponse[0].car_id)
+            .order("created_at", { ascending: false })
+            .limit(7);
 
-      let chargingTimeResults = calculateTimeCharged(invoiceResponse);
+        console.log(invoiceResponse);
 
-      setChargingTimes(chargingTimeResults);
+        let chargingTimeResults = calculateTimeCharged(invoiceResponse);
 
-      setInvoices(invoiceResponse);
+        if (chargingTimeResults && invoiceResponse) {
+          setChargingTimes(chargingTimeResults);
+          setInvoices(invoiceResponse);
+        }
+        return;
+      } catch (error) {
+        throw new Error(error);
+      }
     };
 
     fetchInvoices();
@@ -65,7 +75,7 @@ function Dashboard() {
     return times;
   };
 
-  if (!invoices || !chargingTimes) return <Loader />;
+  if (invoices.length == 0 || chargingTimes.length == 0) return <Loader />;
 
   const BarChart = () => {
     const labels = invoices.map((invoice, index) => {
