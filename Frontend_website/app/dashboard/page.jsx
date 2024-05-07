@@ -23,8 +23,8 @@ import Loader from "../../components/Loader";
 import { getUser } from "../utils";
 
 function Dashboard() {
+  const [isLoading, setIsLoading] = useState(true);
   const [invoices, setInvoices] = useState([]);
-
   const [chargingTimes, setChargingTimes] = useState([]);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ function Dashboard() {
           setChargingTimes(chargingTimeResults);
           setInvoices(invoiceResponse);
         }
-        return;
+        setIsLoading(false);
       } catch (error) {
         throw new Error(error);
       }
@@ -75,7 +75,7 @@ function Dashboard() {
     return times;
   };
 
-  if (invoices.length == 0 || chargingTimes.length == 0) return <Loader />;
+  if (isLoading) return <Loader />;
 
   const BarChart = () => {
     const labels = invoices.map((invoice, index) => {
