@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2014-2022 Richard Hull and contributors
-# See LICENSE.rst for details.
+
+
+# We imported this file from the luma.examples github repo 
+# as it included helper functions to utilize the display in an easier way
+# https://github.com/rm-hull/luma.examples
+
 
 import sys
 import logging
