@@ -1,3 +1,4 @@
+# Imports 
 from stmpy import Machine, Driver, get_graphviz_dot
 import time
 from threading import Thread
@@ -10,14 +11,16 @@ import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 import random
 
+# Setting up the RFID reader
 reader = SimpleMFRC522()
-
 device = get_device()
+
+# The two different topics and broker + port for the MQTT connection
 charger_server_topic = "/group-13/charger_server"
 server_client_topic = "/group-13/server_client"
-
 broker, port = "test.mosquitto.org", 1883
 
+# The Charger MQTT client class
 class MQTT_Client_1:
     def __init__(self):
         self.count = 0
@@ -25,9 +28,11 @@ class MQTT_Client_1:
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message    
 
+    # When the client first connects is prints the connection data
     def on_connect(self, client, userdata, flags, rc):
         print("on_connect(): {}".format(mqtt.connack_string(rc)))
 
+    # When the client received a message on the specified topic it parses it and forwards the message if necessary
     def on_message(self, client, userdata, msg):
         message_str = msg.payload
 
@@ -44,7 +49,7 @@ class MQTT_Client_1:
             self.stm_driver.send(message["trigger"], "charger")
 
 
-
+    # The initial function
     def start(self, broker, port):
 
         print("Connecting to {}:{}".format(broker, port))
@@ -60,6 +65,9 @@ class MQTT_Client_1:
             self.client.disconnect()
 
 class Charger:
+
+# Functions for the connected button, screen and RFID scanner 
+
     def plug_in(self):
         while True:
             BUTTON_PIN = 37
@@ -158,7 +166,7 @@ class Charger:
         t3.start()
         self.licence = ""
 
-    #Server functions
+#Server functions
     def connect_to_server(self):
         msg=json.dumps({"message_to":"server",
                         "trigger":"charger_connected",
@@ -193,7 +201,7 @@ class Charger:
                         "car_id": "",
                         "plate_number": "",
                         "current_charge": ""})
-        self.mqtt_client.publish(charger_server_topic, msg) # remove this when the app is working
+        self.mqtt_client.publish(charger_server_topic, msg)
         print('Checking app')
     
     
@@ -313,16 +321,16 @@ class Charger:
         
 charger = Charger()
         
-# initial transition
+# Initial transition
 t0 = {'source':'initial', 
       'target':'idle'}
 
-#transitions from idle
+# Transitions from idle
 t_idle_1 = {'trigger':'car_plugged_in',
       'source':'idle',
       'target':'tag_identify'}
 
-#transitions from tag_identify
+# Transitions from tag_identify
 t_tag_1 = {'trigger':'tag_detected', 
       'source':'tag_identify', 
       'target':'server_validate'}
@@ -335,7 +343,7 @@ t_tag_3 = {'trigger':'car_unplugged',
       'source':'tag_identify', 
       'target':'idle'}
 
-#transitions from licence_identify
+# Transitions from licence_identify
 t_camera_1 = {'trigger':'licence_detected', 
       'source':'licence_identify', 
       'target':'server_validate'}
@@ -348,7 +356,7 @@ t_camera_3 = {'trigger':'car_unplugged',
       'source':'licence_identify', 
       'target':'idle'}
 
-#transitions from server_validate
+# Transitions from server_validate
 t_server_1 = {'trigger':'tag_info_rejected', 
       'source':'server_validate', 
       'target':'licence_identify'}
@@ -364,7 +372,7 @@ t_server_3 = {'trigger':'licence_info_rejected',
 t_server_4 = {'trigger':'car_unplugged', 
       'source':'server_validate', 
       'target':'idle'}
-#transitions from app_identify
+# Transitions from app_identify
 t_app_1 = {'trigger':'app_start', 
       'source':'app_identify', 
       'target':'charging'}
@@ -377,12 +385,12 @@ t_app_3 = {'trigger':'car_unplugged',
       'source':'app_identify',
       'target':'idle'}
 
-#transitions from identification
+# Transitions from identification
 t_identification = {'trigger':'car_unplugged',
       'source':'identification_failed',
       'target':'idle'}
 
-#transitions from charging
+# Transitions from charging
 t_charging_1 = {'trigger':'charge_complete',
       'source':'charging',
       'target':'charge_complete'}
@@ -391,7 +399,7 @@ t_charging_2 = {'trigger':'car_unplugged',
        'source':'charging',
        'target':'idle'}
 
-#transitions from charge_complete
+# Transitions from charge_complete
 t_complete = {'trigger':'car_unplugged',
       'source':'charge_complete',
       'target':'idle'}

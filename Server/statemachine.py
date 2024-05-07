@@ -1,3 +1,4 @@
+# Imports
 from stmpy import Machine, Driver,  get_graphviz_dot
 from threading import Thread
 import paho.mqtt.client as mqtt
@@ -7,16 +8,20 @@ from dotenv import load_dotenv
 import time
 from supabase import create_client, Client
 
+# Load the local environment variable from the .env file
 load_dotenv() 
 
+# Create the Supabase client
 url: str = os.getenv("SUPABASE_URL")
 key: str = os.getenv("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
+# Set the topic, broker and port for mqtt
 charger_server_topic = "/group-13/charger_server"
 server_client_topic = "/group-13/server_client"
-
 broker, port = "test.mosquitto.org", 1883
+
+# Global message variable for passing between the MQTT client and the Server class
 message = ""
 
 class MQTT_Client_1:
@@ -29,16 +34,12 @@ class MQTT_Client_1:
     def on_connect(self, client, userdata, flags, rc):
         print("on_connect(): {}".format(mqtt.connack_string(rc)))
 
+    # Receive the message and parse it to json
     def on_message(self, client, userdata, msg):
         message_str = msg.payload
-
-        print(message_str)
-
         parsed_json = json.loads(message_str)
 
-        if parsed_json["message_to"] != "server":
-            return
-
+        # If the charger sends a current charge the server forwards this to the app
         if parsed_json["current_charge"] != "":
 
             current_charge_message = {
@@ -48,7 +49,8 @@ class MQTT_Client_1:
 
             self.client.publish(server_client_topic, json.dumps(current_charge_message))
             return
-
+        
+        # If the charger sends that the charge is complete it updates the database which the app is then listening to
         if parsed_json["trigger"] == "charge_complete":
             
             data, count = (
