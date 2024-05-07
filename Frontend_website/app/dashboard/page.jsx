@@ -29,6 +29,7 @@ function Dashboard() {
     const fetchInvoices = async () => {
       const user = await supabase.auth.getUser();
 
+      console.log(user);
       const { data: carResponse, error: carFetchError } = await supabase
         .from("cars")
         .select("*")
@@ -44,11 +45,7 @@ function Dashboard() {
       if (carFetchError) throw new Error(carFetchError);
       if (invoiceFetchError) throw new Error(invoiceFetchError);
 
-      console.log(invoiceResponse);
-
       let chargingTimeResults = calculateTimeCharged(invoiceResponse);
-
-      console.log(chargingTimeResults);
 
       setChargingTimes(chargingTimeResults);
 
@@ -71,16 +68,14 @@ function Dashboard() {
   if (!invoices || !chargingTimes) return <Loader />;
 
   const BarChart = () => {
+    const labels = invoices.map((invoice, index) => {
+      let timeInterval = calculateTimeInterval(invoice.created_at, index);
+
+      return timeInterval;
+    });
+
     const data = {
-      labels: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-      ],
+      labels: labels.reverse(),
       datasets: [
         {
           label: "Number of Minutes Charged",
@@ -138,12 +133,38 @@ function Dashboard() {
     return newDate;
   }
 
+  function calculateTimeInterval(date, index) {
+    let newDate = new Date(date);
+
+    let startHour = newDate.getHours();
+    let startMinute = newDate.getMinutes();
+
+    if (startHour < 10) startHour = "0" + startHour;
+    if (startMinute < 10) startMinute = "0" + startMinute;
+
+    let stopDateTime = addMinutesToDate(newDate, chargingTimes[index]);
+
+    let stopHour = stopDateTime.getHours();
+    let stopMinute = stopDateTime.getMinutes();
+
+    if (stopHour < 10) stopHour = "0" + stopHour;
+    if (stopMinute < 10) stopMinute = "0" + stopMinute;
+
+    let startTime = `${startHour}:${startMinute}`;
+    let stopTime = `${stopHour}:${stopMinute}`;
+
+    let currentDuration = `${startTime} - ${stopTime}`;
+
+    return currentDuration;
+  }
+
   const TableCharging = () => {
     const data = invoices.map((invoice, index) => {
       let newDate = new Date(invoice.created_at);
 
-      let day = newDate.getDate();
+      let timeInterval = calculateTimeInterval(invoice.created_at, index);
 
+      let day = newDate.getDate();
       let month = newDate.getMonth() + 1;
 
       if (day < 10) day = "0" + day;
@@ -151,34 +172,13 @@ function Dashboard() {
 
       let date = `${day}.${month}`;
 
-      let startHour = newDate.getHours();
-      let startMinute = newDate.getMinutes();
-
-      if (startHour < 10) startHour = "0" + startHour;
-      if (startMinute < 10) startMinute = "0" + startMinute;
-
-      let stopDateTime = addMinutesToDate(newDate, chargingTimes[index]);
-
-      let stopHour = stopDateTime.getHours();
-      let stopMinute = stopDateTime.getMinutes();
-
-      if (stopHour < 10) stopHour = "0" + stopHour;
-      if (stopMinute < 10) stopMinute = "0" + stopMinute;
-
-      let startTime = `${startHour}:${startMinute}`;
-      let stopTime = `${stopHour}:${stopMinute}`;
-
-      let currentDuration = `${startTime} - ${stopTime}`;
-
-      console.log(chargingTimes);
-
       let kwh = chargingTimes[index] / 2;
       let price = kwh * 2;
 
       return {
         id: index + 1,
         date: date,
-        timeInterval: currentDuration,
+        timeInterval: timeInterval,
         kwh: Math.round(kwh),
         price: Math.round(price),
       };
