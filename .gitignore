@@ -1,0 +1,7 @@
+
+# global env files
+.env
+
+Charger/chargerEnv
+
+Server/serverEnv

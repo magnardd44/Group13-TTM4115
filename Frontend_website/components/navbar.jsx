@@ -1,12 +1,8 @@
 "use client";
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button";
 import { supabase } from "../lib/utils";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { CgProfile } from "react-icons/cg";

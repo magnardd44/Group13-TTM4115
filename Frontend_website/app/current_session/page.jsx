@@ -84,7 +84,6 @@ export default function Cars() {
         }
 
         if (payload.message.trigger == "app_request") {
-          console.log("DINGDINGDING");
           setNeedsVerification(true);
         } else {
           setNeedsVerification(false);
