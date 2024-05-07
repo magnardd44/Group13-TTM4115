@@ -6,7 +6,7 @@ export const LogInUser = async () => {
       provider: "google",
       options: {
         redirectTo:
-          "https://group13-ttm411530-magnardd44s-projects.vercel.app/current_session",
+          "https://group13-ttm4115-magnardd44s-projects.vercel.app/current_session",
         queryParams: {
           prompt: "consent",
         },
@@ -18,7 +18,7 @@ export const LogInUser = async () => {
 };
 
 //"http://localhost:3000/current_session",
-//"https://group13-ttm411530-magnardd44s-projects.vercel.app/current_session",
+//"https://group13-ttm4115-magnardd44s-projects.vercel.app/current_session",
 
 export const getUser = async () => {
   try {
